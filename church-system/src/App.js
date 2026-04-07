@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar'; // Adjust path
-import Login from './pages/Login'; // Adjust path
-import Home from './pages/Home'; // Adjust path
-// Import other components as needed
+import Navbar from './components/Navbar'; 
+import Login from './pages/Login';
+import Home from './pages/Home';
+import Register from './pages/Register';
+
+
 
 function AppLayout() {
   const location = useLocation();
@@ -14,6 +16,7 @@ function AppLayout() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         {/* Add other routes */}
       </Routes>
     </>
