@@ -1,26 +1,29 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './App.css';
-import Navbar from './components/Navbar.js'
-import Home from './pages/Home.js'
-import Login from './pages/Login.js'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import Navbar from './components/Navbar'; // Adjust path
+import Login from './pages/Login'; // Adjust path
+import Home from './pages/Home'; // Adjust path
+// Import other components as needed
 
-function App() {
+function AppLayout() {
+  const location = useLocation();
+  const showNavbar = location.pathname === '/'; // Show only on home
+
   return (
-     <>
-      <Router>
-      <div className="App">
-        <Navbar />
-        <div>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </div>
-      </div>
-    </Router>
+    <>
+      {showNavbar && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        {/* Add other routes */}
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
+    </BrowserRouter>
+  );
+}

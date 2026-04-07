@@ -602,7 +602,7 @@ export default function LoginPage() {
         <div className="brand-logo-mark">
           <CrossSvg size={18} />
         </div>
-        <span className="brand-logo-name">GraceHub</span>
+        <span className="brand-logo-name">Westlands P.A.G</span>
       </div>
 
       <div className="login-page">
@@ -621,7 +621,7 @@ export default function LoginPage() {
                 <CrossSvg size={22} />
               </div>
               <div className="brand-logo-text">
-                <span className="brand-logo-name">GraceHub</span>
+                <span className="brand-logo-name">Westlands P.A.G</span>
                 <span className="brand-logo-tagline">Church Management</span>
               </div>
             </a>
@@ -650,7 +650,7 @@ export default function LoginPage() {
           </div>
 
           <div className="brand-bottom">
-            &copy; {new Date().getFullYear()} GraceHub. All rights reserved.
+            &copy; {new Date().getFullYear()} Westlands P.A.G. All rights reserved.
           </div>
         </aside>
 
@@ -805,7 +805,7 @@ export default function LoginPage() {
             </div>
 
             {/* Back to home */}
-            <a href="/" className="back-home" aria-label="Back to GraceHub homepage">
+            <a href="/" className="back-home" aria-label="Back to Westlands P.A.G homepage">
               <ArrowLeftIcon />
               Back to homepage
             </a>
@@ -813,7 +813,7 @@ export default function LoginPage() {
             {/* Footer note */}
             <p className="form-footer-note">
               Need help? Contact your
-              <a href="mailto:support@gracehub.com">church administrator</a>
+              <a href="mailto:support@westlandspag.org">church administrator</a>
               {" "}or visit our
               <a href="/support">support centre</a>.
             </p>
