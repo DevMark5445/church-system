@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 /* ══════════════════════════════════════════════════
    GLOBAL STYLES
@@ -563,12 +564,6 @@ const PhoneIcon = () => (
   </svg>
 );
 
-const ShieldIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-  </svg>
-);
-
 const LockIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -591,13 +586,6 @@ const EyeOffIcon = () => (
   </svg>
 );
 
-const ArrowRightIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <line x1="5"  y1="12" x2="19" y2="12"/>
-    <polyline points="12 5 19 12 12 19"/>
-  </svg>
-);
-
 const ArrowLeftIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <line x1="19" y1="12" x2="5" y2="12"/>
@@ -613,24 +601,12 @@ const AlertCircle = () => (
   </svg>
 );
 
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
 const UserPlusIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
     <circle cx="8.5" cy="7" r="4"/>
     <line x1="20" y1="8" x2="20" y2="14"/>
     <line x1="23" y1="11" x2="17" y2="11"/>
-  </svg>
-);
-
-const ChevronDownIcon = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <polyline points="6 9 12 15 18 9"/>
   </svg>
 );
 
@@ -652,9 +628,6 @@ const validate = (fields) => {
 
   if (fields.phone && !/^[+\d\s\-()]{7,}$/.test(fields.phone))
     errs.phone = "Please enter a valid phone number.";
-
-  if (!fields.role)
-    errs.role = "Please select your role.";
 
   if (!fields.password)
     errs.password = "Password is required.";
@@ -687,24 +660,12 @@ const getPasswordStrength = (pwd) => {
 };
 
 /* ══════════════════════════════════════════════════
-   ROLES
-══════════════════════════════════════════════════ */
-const ROLES = [
-  { value: "member",    label: "Church Member" },
-  { value: "elder",     label: "Elder / Deacon" },
-  { value: "pastor",    label: "Pastor / Minister" },
-  { value: "admin",     label: "Church Administrator" },
-  { value: "treasurer", label: "Treasurer" },
-  { value: "secretary", label: "Church Secretary" },
-];
-
-/* ══════════════════════════════════════════════════
    ONBOARDING STEPS (left panel)
 ══════════════════════════════════════════════════ */
 const STEPS = [
   { title: "Create Your Account",  sub: "Fill in your details on the right" },
   { title: "Verify Your Email",    sub: "Check your inbox for a link" },
-  { title: "Set Up Your Profile",  sub: "Add your church and role details" },
+  { title: "Set Up Your Profile",  sub: "Add your church details" },
   { title: "Start Managing",       sub: "Full dashboard access unlocked" },
 ];
 
@@ -712,12 +673,21 @@ const STEPS = [
    REGISTER PAGE COMPONENT
 ══════════════════════════════════════════════════ */
 export default function RegisterPage() {
+  const { register, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+  
   /* ── form state ── */
   const [firstName,       setFirstName]       = useState("");
   const [lastName,        setLastName]        = useState("");
   const [email,           setEmail]           = useState("");
   const [phone,           setPhone]           = useState("");
-  const [role,            setRole]            = useState("");
   const [password,        setPassword]        = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [terms,           setTerms]           = useState(false);
@@ -729,7 +699,6 @@ export default function RegisterPage() {
   const [loading,     setLoading]     = useState(false);
   const [alert,       setAlert]       = useState(null);
   const [shake,       setShake]       = useState(false);
-  const [success,     setSuccess]     = useState(false);
 
   const pwdStrength = getPasswordStrength(password);
 
@@ -758,7 +727,7 @@ export default function RegisterPage() {
 
     const errs = validate({
       firstName, lastName, email, phone,
-      role, password, confirmPassword, terms,
+      password, confirmPassword, terms,
     });
 
     if (Object.keys(errs).length) {
@@ -770,51 +739,34 @@ export default function RegisterPage() {
     setErrors({});
     setLoading(true);
 
-    /* ── Replace this block with your real API call ── */
-    await new Promise((r) => setTimeout(r, 2000));
-    setLoading(false);
-    /* ── End of simulated API call ── */
+    try {
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        phoneNumber: phone,
+        password,
+      };
 
-    setSuccess(true);
+      const result = await register(userData);
+
+      if (result.success) {
+        setAlert({ type: "success", message: result.message || "Registration successful! Redirecting to login..." });
+        // Redirect to login after brief delay
+        setTimeout(() => navigate('/login'), 1500);
+      } else {
+        setAlert({ type: "danger", message: result.message || "Registration failed. Please try again." });
+        triggerShake();
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      const errorMessage = error.message || "Network error. Please check your connection and try again.";
+      setAlert({ type: "danger", message: errorMessage });
+      triggerShake();
+    } finally {
+      setLoading(false);
+    }
   };
-
-  /* ────────────────────────────────────────────── */
-  /*  SUCCESS SCREEN                                */
-  /* ────────────────────────────────────────────── */
-  if (success) {
-    return (
-      <>
-        <div className="mobile-brand-bar" aria-hidden="true">
-          <div className="brand-logo-mark"><CrossSvg size={18} /></div>
-          <span className="brand-logo-name">Westlands P.A.G</span>
-        </div>
-
-        <div className="register-page">
-          {/* Left brand panel (same as form view) */}
-          <BrandPanel />
-
-          <main className="register-form-panel">
-            <div className="register-card">
-              <div className="success-state">
-                <div className="success-icon">
-                  <CheckIcon />
-                </div>
-                <h2 className="success-title">Account Created!</h2>
-                <p className="success-body">
-                  Welcome to Westlands P.A.G. We've sent a verification email to{" "}
-                  <strong>{email}</strong>. Please check your inbox to activate
-                  your account.
-                </p>
-                <Link to="/login" className="success-cta">
-                  Go to Sign In <ArrowRightIcon />
-                </Link>
-              </div>
-            </div>
-          </main>
-        </div>
-      </>
-    );
-  }
 
   /* ────────────────────────────────────────────── */
   /*  MAIN FORM VIEW                                */
@@ -970,36 +922,6 @@ export default function RegisterPage() {
                   {errors.phone && (
                     <p className="field-error" id="phone-error" role="alert">
                       <AlertCircle />{errors.phone}
-                    </p>
-                  )}
-                </div>
-
-                {/* ── Role ── */}
-                <div className="field">
-                  <label className="field-label" htmlFor="role">
-                    Your Role
-                  </label>
-                  <div className="field-wrap">
-                    <span className="field-icon"><ShieldIcon /></span>
-                    <select
-                      id="role"
-                      className={`field-select${errors.role ? " error" : ""}`}
-                      value={role}
-                      onChange={(e) => { setRole(e.target.value); clearFieldError("role"); }}
-                      aria-required="true"
-                      aria-invalid={!!errors.role}
-                      aria-describedby={errors.role ? "role-error" : undefined}
-                    >
-                      <option value="">Select role…</option>
-                      {ROLES.map(({ value, label }) => (
-                        <option key={value} value={value}>{label}</option>
-                      ))}
-                    </select>
-                    <span className="select-chevron"><ChevronDownIcon /></span>
-                  </div>
-                  {errors.role && (
-                    <p className="field-error" id="role-error" role="alert">
-                      <AlertCircle />{errors.role}
                     </p>
                   )}
                 </div>

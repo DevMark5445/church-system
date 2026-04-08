@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 /* ══════════════════════════════════════════════════
    GLOBAL STYLES
@@ -538,6 +539,16 @@ const validate = (email, password) => {
    LOGIN PAGE COMPONENT
 ══════════════════════════════════════════════════ */
 export default function LoginPage() {
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+  
   const [email,       setEmail]       = useState("");
   const [password,    setPassword]    = useState("");
   const [showPwd,     setShowPwd]     = useState(false);
@@ -576,16 +587,31 @@ export default function LoginPage() {
     setErrors({});
     setLoading(true);
 
-    /* Simulate API call — replace with real auth logic */
-    await new Promise((r) => setTimeout(r, 1800));
-    setLoading(false);
-
-    /* Demo: treat any input as wrong credentials to show error state */
-    if (email !== "admin@gracehub.com") {
-      setAlert({ type: "danger", message: "Invalid email or password. Please try again." });
+    try {
+      const result = await login(email, password);
+      
+      if (result.success) {
+        setAlert({ type: "success", message: "Login successful! Redirecting..." });
+        // Store remember me preference
+        if (rememberMe) {
+          sessionStorage.setItem("rememberMe", "true");
+        }
+        // Navigate after brief delay to show success message
+        setTimeout(() => navigate('/'), 1000);
+      } else if (result.requiresVerification) {
+        setAlert({ type: "danger", message: result.message || "Please verify your email before logging in." });
+        triggerShake();
+      } else {
+        setAlert({ type: "danger", message: result.message || "Invalid email or password. Please try again." });
+        triggerShake();
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      const errorMessage = error.message || "Network error. Please check your connection and try again.";
+      setAlert({ type: "danger", message: errorMessage });
       triggerShake();
-    } else {
-      setAlert({ type: "success", message: "Login successful! Redirecting to your dashboard…" });
+    } finally {
+      setLoading(false);
     }
   };
 
