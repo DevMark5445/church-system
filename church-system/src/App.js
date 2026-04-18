@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Register from './pages/Register';
+import DashBoard from './pages/DashBoard';
 import { AuthProvider } from './context/AuthContext';
 
 
@@ -17,6 +18,7 @@ function AppLayout() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/register" element={<Register />} />
         {/* Add other routes */}
       </Routes>

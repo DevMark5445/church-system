@@ -1069,7 +1069,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Back to login */}
-            <Link to="/login" className="back-link">
+            <Link to="/DashBoard" className="back-link">
               <ArrowLeftIcon />
               Already have an account? Sign in
             </Link>
@@ -1103,7 +1103,7 @@ function BrandPanel() {
 
       {/* Logo */}
       <div className="brand-top">
-        <a href="/" className="brand-logo" aria-label="Westlands P.A.G homepage">
+        <a href="/DashBoard">
           <div className="brand-logo-mark">
             <CrossSvg size={22} />
           </div>
