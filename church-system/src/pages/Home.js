@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { LogIn } from 'lucide-react';
 
 /* SVG Components */
 const CrossSvg = ({ size = 20 }) => (
@@ -35,13 +36,7 @@ const EventsSvg = () => (
   </svg>
 );
 
-const LoginSvg = () => (
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-    <polyline points="10 17 15 12 10 7" />
-    <line x1="15" y1="12" x2="3" y2="12" />
-  </svg>
-);
+// ✅ LoginSvg removed — now using lucide-react's LogIn below
 
 function useReveal() {
   const ref = useRef(null);
@@ -80,8 +75,10 @@ function Hero() {
           Westlands P.A.G brings your congregation together — from member records and giving history to events and communications — all in one secure, easy-to-use platform.
         </p>
         <div className="hero-actions">
+          {/* ✅ Updated: using lucide-react LogIn icon */}
           <Link to="/login" className="btn-primary">
-            <LoginSvg /> Login to Westlands P.A.G
+            <LogIn size={20} aria-hidden="true" />
+            Login to Westlands P.A.G
           </Link>
         </div>
       </div>
@@ -155,8 +152,10 @@ function CtaSection() {
         <p className="cta-sub">
           Log in now and experience a simpler way to manage your congregation, finances, and events.
         </p>
+        {/* ✅ Updated: using lucide-react LogIn icon */}
         <Link to="/login" className="btn-primary">
-          <LoginSvg /> Login to Westlands P.A.G
+          <LogIn size={20} aria-hidden="true" />
+          Login to Westlands P.A.G
         </Link>
       </div>
     </section>
@@ -185,19 +184,16 @@ function UserProfileDropdown({ user, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Get user initials for avatar
   const getInitials = (firstName, lastName) => {
     return `${(firstName || '').charAt(0)}${(lastName || '').charAt(0)}`.toUpperCase() || 'U';
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -214,7 +210,6 @@ function UserProfileDropdown({ user, onLogout }) {
       <div className="user-greeting-text">
         Hello <span className="first-name">{user?.firstName || 'User'}</span>
       </div>
-      
       <div style={{ position: 'relative' }}>
         <button
           className="dropdown-trigger"
@@ -225,13 +220,11 @@ function UserProfileDropdown({ user, onLogout }) {
         >
           {getInitials(user?.firstName, user?.lastName)}
         </button>
-
         <div className={`dropdown-menu ${isOpen ? 'open' : ''}`}>
           <div className="dropdown-item">
             <span className="dropdown-item-label">Email</span>
             <div className="dropdown-item-value">{user?.email}</div>
           </div>
-          
           <button
             className="logout-btn-dropdown"
             onClick={handleLogout}
