@@ -1,14 +1,4 @@
-// src/pages/UserDashboard.jsx
-// ─── CHANGE FROM YOUR ORIGINAL ───────────────────────────────────────────────
-// ONLY the Sidebar logout button was updated.
-// Before: it was a no-op button with no onClick handler.
-// After:  it calls logout() from useAuth() and navigates to /login.
-// Everything else is 100% identical to your original code.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState, useRef, useEffect, createContext, useContext } from "react";
-import { useNavigate } from "react-router-dom";       // ← added (needed for logout redirect)
-import { useAuth } from "../context/AuthContext";      // ← added (needed for logout)
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const currentUser = {
@@ -86,17 +76,7 @@ const NAV = [
 
 function Sidebar() {
   const { section, setSection, sidebarOpen, setSidebarOpen } = useDash();
-  const { logout } = useAuth();           // ← ADDED: get logout from auth context
-  const navigate = useNavigate();          // ← ADDED: for post-logout redirect
-
   const nav = (id) => { setSection(id); setSidebarOpen(false); };
-
-  // ← ADDED: logout handler — clears auth state then sends user to /login
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
   return (
     <>
       {sidebarOpen && (
@@ -136,13 +116,9 @@ function Sidebar() {
           })}
         </nav>
 
-        {/* Logout — ONLY CHANGE: onClick now calls handleLogout */}
+        {/* Logout */}
         <div className="px-3 py-4 border-t border-white/10">
-          <button
-            onClick={handleLogout}   // ← CHANGED: was no handler, now calls handleLogout
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/50 hover:text-red-400 hover:bg-red-500/10 transition-all"
-            aria-label="Logout"
-          >
+          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/50 hover:text-red-400 hover:bg-red-500/10 transition-all" aria-label="Logout">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Logout
           </button>
