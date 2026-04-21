@@ -753,7 +753,7 @@ export default function RegisterPage() {
       if (result.success) {
         setAlert({ type: "success", message: result.message || "Registration successful! Redirecting to login..." });
         // Redirect to login after brief delay
-        setTimeout(() => navigate('/login'), 1500);
+        setTimeout(() => navigate('/DashBoard'), 1500);
       } else {
         setAlert({ type: "danger", message: result.message || "Registration failed. Please try again." });
         triggerShake();

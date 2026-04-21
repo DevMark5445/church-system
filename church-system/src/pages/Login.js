@@ -606,7 +606,7 @@ export default function LoginPage() {
           sessionStorage.setItem("rememberMe", "true");
         }
         // Navigate after brief delay to show success message
-        setTimeout(() => navigate('/'), 1000);
+        setTimeout(() => navigate('/DashBoard'), 1000);
       } else if (result.requiresVerification) {
         setAlert({ type: "danger", message: result.message || "Please verify your email before logging in." });
         triggerShake();
