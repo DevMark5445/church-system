@@ -44,11 +44,11 @@ const fmtCur = (n) => `KES ${n.toLocaleString()}`;
 const getInitials = (f, l) => `${(f || "").charAt(0)}${(l || "").charAt(0)}`.toUpperCase() || "U";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
-const Icon = ({ d, ...p }) => (
-  <svg fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true" {...p}>
-    {d}
-  </svg>
-);
+// const Icon = ({ d, ...p }) => (
+//   <svg fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true" {...p}>
+//     {d}
+//   </svg>
+// );
 const CrossIcon = ({ sz = 14 }) => (
   <svg viewBox="0 0 20 20" style={{ width: sz, height: sz }} aria-hidden="true">
     <rect x="8.5" y="1" width="3" height="18" rx="1" fill="currentColor" />
